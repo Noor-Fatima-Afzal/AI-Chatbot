@@ -12,7 +12,7 @@ function App() {
     setResponseText('');
     try {
       const response = await axios({
-        url: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=AIzaSyC8OAslgVPQM0TSIjbnoYnWuxtKxKwHoug',
+        url: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${process.env.GOOGLE_API_KEY}',
         method: 'POST',
         data: {
           "contents": [
