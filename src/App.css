@@ -90,4 +90,7 @@ i {
   font-size: 20px; /* Icon size */
 }
 
-
+.del-btn{
+  background-color: #ffffff; /* Red color for delete button */
+  color: rgb(13, 1, 1); /* White text color */
+}
