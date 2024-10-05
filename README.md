@@ -21,6 +21,7 @@ This is a simple chatbot application built with React that allows users to ask q
 
   ```bash
   npm install
+
 3. Run the development server:
   ```bash
   npm start
