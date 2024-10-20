@@ -2,11 +2,14 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import os
-from langchain.schema import AIMessage, HumanMessage, SystemMessage
 from langchain_groq import ChatGroq
+from langchain.schema import AIMessage, HumanMessage, SystemMessage
+
+groq_api_key = os.getenv('GROQ_API_KEY')
+llm = ChatGroq(groq_api_key=groq_api_key, model="Gemma-7b-It")
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r'/*': {'origins': '*'}})
 
 # Database configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///chat.db')
@@ -48,10 +51,6 @@ def delete_chat(id):
         db.session.commit()
         return jsonify({'message': 'Chat deleted successfully'}), 200
     return jsonify({'message': 'Chat not found'}), 404
-
-# groq_api_key = os.getenv('GROQ_API_KEY')
-groq_api_key = "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"
-llm = ChatGroq(groq_api_key=groq_api_key, model="Gemma-7b-It")
 
 @app.route('/generateAnswer', methods=['POST'])
 def generate_answer():
