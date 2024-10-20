@@ -14,29 +14,25 @@ function App() {
       .replace(/```(.*?)```/gs, '<pre class="code-block">$1</pre>')
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
   };
-  
+
   const readAloud = () => {
     if (responseText) {
       const utterance = new SpeechSynthesisUtterance(responseText);
       window.speechSynthesis.speak(utterance);
     }
   };
-  
+
   const stopReading = () => {
     window.speechSynthesis.cancel();
   };
-  
+
   const copyResponse = () => {
     navigator.clipboard
       .writeText(responseText)
-      .then(() => {
-        alert('Response copied to clipboard!');
-      })
-      .catch((err) => {
-        console.error('Could not copy text: ', err);
-      });
+      .then(() => alert('Response copied to clipboard!'))
+      .catch((err) => console.error('Could not copy text: ', err));
   };
-  
+
   const clearText = () => {
     setUserQuestion('');
     setResponseText('');
@@ -51,23 +47,15 @@ function App() {
   async function generateAnswer() {
     setLoading(true);
     setResponseText('');
+
+    const API_URL = 'http://localhost:5000/generateAnswer';
+
     try {
-      const response = await axios({
-        url: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=AIzaSyC8OAslgVPQM0TSIjbnoYnWuxtKxKwHoug',
-        method: 'POST',
-        data: {
-          "contents": [
-            {
-              "parts": [
-                {
-                  "text": userQuestion
-                }
-              ]
-            }
-          ]
-        }
+      const response = await axios.post(API_URL, {
+        inputs: userQuestion,
       });
-      const answer = response.data.candidates[0].content.parts[0].text;
+
+      const answer = response.data.generated_text;
       setResponseText(answer);
 
       await axios.post('http://localhost:5000/saveChat', {
@@ -75,8 +63,8 @@ function App() {
         responseText: answer,
       });
     } catch (error) {
-      console.error('Error generating answer:', error);
-      setResponseText('Error generating answer. Please try again.');
+      console.error('Error generating answer:', error.response || error);
+      setResponseText('An error occurred. Please check your input and try again.');
     } finally {
       setLoading(false);
     }
@@ -94,7 +82,6 @@ function App() {
   async function deleteChat(id) {
     try {
       await axios.delete(`http://localhost:5000/deleteChat/${id}`);
-      // Update the history state by filtering out the deleted chat
       setHistory(history.filter((chat) => chat.id !== id));
     } catch (error) {
       console.error('Error deleting chat:', error);
@@ -117,7 +104,7 @@ function App() {
         Generate Answer
       </button>
       <button onClick={toggleHistory}>
-        {showHistory ? 'Show Response' : 'View History'}
+        {showHistory ? 'Hide History' : 'View History'}
       </button>
 
       <div className="response-container">
@@ -132,9 +119,7 @@ function App() {
                 <br />
                 <strong>A:</strong> {chat.response_text}
                 <button className='del-btn' onClick={() => deleteChat(chat.id)}>Delete</button>
-                <p>
-                  ____________________________________________________________________________________________________________
-                </p>
+                <p>____________________________________________________________________________________________________________</p>
               </li>
             ))}
           </ul>
@@ -162,7 +147,5 @@ function App() {
     </div>
   );
 }
-
-
 
 export default App;
