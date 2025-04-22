@@ -2,6 +2,8 @@
 
 This is a simple chatbot application built with React that allows users to ask questions and receive answers through an API. The application also supports functionalities like reading responses aloud, copying them to the clipboard, clearing text, and viewing or deleting chat history.
 
+![Architecture Diagram](Chatbot.png)
+
 ## Features
 
 - **Ask Questions**: Users can input their questions, and the app sends the request to a generative API to receive an answer.
